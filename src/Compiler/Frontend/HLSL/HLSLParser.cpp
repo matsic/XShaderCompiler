@@ -654,12 +654,28 @@ StructDeclPtr HLSLParser::ParseStructDecl(bool parseStructTkn, const TokenPtr& i
         /* Parse member variable declarations */
         ast->localStmnts = ParseGlobalStmntList();
 
+        auto procStmt = [](){};
+
         for (auto& stmnt : ast->localStmnts)
         {
             if (stmnt->Type() == AST::Types::VarDeclStmnt)
             {
                 /* Store copy in member variable list */
                 ast->varMembers.push_back(std::static_pointer_cast<VarDeclStmnt>(stmnt));
+            }
+            else if (stmnt->Type() == AST::Types::BufferDeclStmnt)
+            {
+                auto s = std::static_pointer_cast<BufferDeclStmnt>(stmnt);
+                for (auto& d: s->thisDecls)
+                    d->structDeclRef = ast.get();
+                ast->bufMembers.push_back(s);
+            }
+            else if (stmnt->Type() == AST::Types::SamplerDeclStmnt)
+            {
+                auto s = std::static_pointer_cast<SamplerDeclStmnt>(stmnt);
+                for (auto& d: s->thisDecls)
+                    d->structDeclRef = ast.get();
+                ast->sampMembers.push_back(s);
             }
             else if (auto basicDeclStmnt = stmnt->As<BasicDeclStmnt>())
             {
@@ -681,6 +697,14 @@ StructDeclPtr HLSLParser::ParseStructDecl(bool parseStructTkn, const TokenPtr& i
             for (auto& varDecl : varDeclStmnt->varDecls)
                 varDecl->structDeclRef = ast.get();
         }
+
+        /*for (auto& s: ast->bufMembers)
+            for (auto& d: s->thisDecls)
+                d->structDeclRef = ast.get();
+
+        for (auto& s: ast->sampMembers)
+            for (auto& d: s->samplerDecls)
+                d->structDeclRef = ast.get();*/
 
         /* Decorate all member functions with a reference to this structure declaration */
         for (auto& funcDecl : ast->funcMembers)

@@ -221,7 +221,7 @@ IMPLEMENT_VISIT_PROC(StructDecl)
             {
                 /* Does the base structure has a variable with the same identifier? */
                 const StructDecl* varDeclOwner = nullptr;
-                if (ast->baseStructRef->FetchVarDecl(varDecl->ident, &varDeclOwner))
+                if (ast->baseStructRef->FetchInStructDecl/*FetchVarDecl*/(varDecl->ident, &varDeclOwner))
                     Warning(R_DeclShadowsMemberOfBase(varDecl->ident, varDeclOwner->ToString()), varDecl.get());
             }
         }
@@ -1326,7 +1326,7 @@ void HLSLAnalyzer::AnalyzeObjectExprVarDeclFromStruct(ObjectExpr* expr, StructDe
     else
     {
         /* Fetch struct member variable declaration from next identifier */
-        expr->symbolRef = FetchVarDeclFromStruct(structTypeDen, expr->ident, expr);
+        expr->symbolRef = /*FetchVarDeclFromStruct*/FetchFetchInStructDeclFromStruct(structTypeDen, expr->ident, expr);
     }
 
     /* Check if struct member and identifier are both static or non-static */

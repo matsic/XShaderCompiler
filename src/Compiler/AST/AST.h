@@ -540,10 +540,15 @@ struct TypeSpecifier : public TypedAST
     TypeDenoterPtr              typeDenoter;                                // Own type denoter.
 };
 
+struct InStructDecl : public Decl
+{
+    StructDecl*                  structDeclRef  = nullptr;  // Reference to its owner structure declaration (optional parent-parent-node). May be null.
+};
+
 /* ----- Declaration objects ----- */
 
 // Variable declaration.
-struct VarDecl : public Decl
+struct VarDecl : public InStructDecl //Decl
 {
     AST_INTERFACE(VarDecl);
 
@@ -606,14 +611,15 @@ struct VarDecl : public Decl
 
     VarDeclStmnt*                   declStmntRef        = nullptr;  // Reference to its declaration statement (parent node). May be null.
     UniformBufferDecl*              bufferDeclRef       = nullptr;  // Reference to its uniform buffer declaration (optional parent-parent-node). May be null.
-    StructDecl*                     structDeclRef       = nullptr;  // Reference to its owner structure declaration (optional parent-parent-node). May be null.
+//    StructDecl*                     structDeclRef       = nullptr;  // Reference to its owner structure declaration (optional parent-parent-node). May be null.
     VarDecl*                        staticMemberVarRef  = nullptr;  // Bi-directional reference to its static variable declaration or definition. May be null.
 };
 
 // Buffer declaration.
-struct BufferDecl : public Decl
+struct BufferDecl : public InStructDecl //Decl
 {
     AST_INTERFACE(BufferDecl);
+
 
     FLAG_ENUM
     {
@@ -634,7 +640,7 @@ struct BufferDecl : public Decl
 };
 
 // Sampler state declaration.
-struct SamplerDecl : public Decl
+struct SamplerDecl : public InStructDecl //Decl
 {
     AST_INTERFACE(SamplerDecl);
 
@@ -677,6 +683,7 @@ struct StructDecl : public Decl
 
     // Returns the VarDecl AST node inside this struct decl for the specified identifier, or null if there is no such VarDecl.
     VarDecl* FetchVarDecl(const std::string& ident, const StructDecl** owner = nullptr) const;
+    InStructDecl* FetchInStructDecl(const std::string& ident, const StructDecl** owner = nullptr) const;
 
     // Returns the VarDecl AST node of the 'base' member variable, or null if there is no such VarDecl.
     VarDecl* FetchBaseMember() const;
@@ -744,6 +751,8 @@ struct StructDecl : public Decl
     //TODO: maybe replace "VarDeclStmntPtr" by "VarDeclPtr" here.
     std::vector<VarDeclStmntPtr>    varMembers;                         // List of all member variable declaration statements.
     std::vector<FunctionDeclPtr>    funcMembers;                        // List of all member function declarations.
+    std::vector<SamplerDeclStmntPtr> sampMembers;                         // List of all member sampler declaration statements.
+    std::vector<BufferDeclStmntPtr> bufMembers;                         // List of all member buffer declaration statements.
 
     BasicDeclStmnt*                 declStmntRef            = nullptr;  // Reference to its declaration statement (parent node).
     StructDecl*                     baseStructRef           = nullptr;  // Optional reference to base struct.
@@ -902,6 +911,7 @@ struct BufferDeclStmnt : public Stmnt
 
     BufferTypeDenoterPtr        typeDenoter;    // Own type denoter.
     std::vector<BufferDeclPtr>  bufferDecls;    // Buffer declaration list.
+    typeof(bufferDecls)& thisDecls = bufferDecls;
 };
 
 // Sampler declaration.
@@ -914,6 +924,7 @@ struct SamplerDeclStmnt : public Stmnt
 
     SamplerTypeDenoterPtr       typeDenoter;    // Own type denoter.
     std::vector<SamplerDeclPtr> samplerDecls;   // Sampler declaration list.
+    typeof(samplerDecls)& thisDecls = samplerDecls;
 };
 
 // Basic declaration statement.
@@ -983,6 +994,7 @@ struct VarDeclStmnt : public Stmnt
 
     TypeSpecifierPtr        typeSpecifier;  // Type basis for all variables (can be extended by array indices in each individual variable).
     std::vector<VarDeclPtr> varDecls;       // Variable declaration list.
+    typeof(varDecls)& thisDecls = varDecls;
 };
 
 // Type alias declaration statement.

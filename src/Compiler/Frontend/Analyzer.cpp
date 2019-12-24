@@ -161,7 +161,7 @@ AST* Analyzer::Fetch(const std::string& ident, const AST* ast)
         auto structDecl = ActiveFunctionStructDecl();
         if (structDecl)
         {
-            if (auto symbol = structDecl->FetchVarDecl(ident))
+            if (auto symbol = structDecl->FetchInStructDecl/*FetchVarDecl*/(ident))
                 return symbol;
         }
 
@@ -290,6 +290,20 @@ VarDecl* Analyzer::FetchVarDeclFromStruct(const StructTypeDenoter& structTypeDen
     if (auto structDecl = structTypeDenoter.structDeclRef)
     {
         if (auto symbol = structDecl->FetchVarDecl(ident))
+            return symbol;
+        else
+            ErrorUndeclaredIdent(ident, structDecl->ToString(), structDecl->FetchSimilar(ident), ast);
+    }
+    else
+        Error(R_MissingReferenceToStructInType(structTypeDenoter.ToString()), ast);
+    return nullptr;
+}
+
+InStructDecl* Analyzer::FetchFetchInStructDeclFromStruct(const StructTypeDenoter& structTypeDenoter, const std::string& ident, const AST* ast)
+{
+    if (auto structDecl = structTypeDenoter.structDeclRef)
+    {
+        if (auto symbol = structDecl->FetchInStructDecl(ident))
             return symbol;
         else
             ErrorUndeclaredIdent(ident, structDecl->ToString(), structDecl->FetchSimilar(ident), ast);

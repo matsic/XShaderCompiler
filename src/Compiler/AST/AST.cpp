@@ -717,6 +717,35 @@ VarDecl* StructDecl::FetchVarDecl(const std::string& ident, const StructDecl** o
     return nullptr;
 }
 
+InStructDecl* StructDecl::FetchInStructDecl(const std::string& ident, const StructDecl** owner) const
+{
+    for (const auto& d: bufMembers) for (const auto& dd: d->thisDecls)
+    {
+        if ( dd->ident.Original() == ident)
+            return dd.get();
+    }
+
+    for (const auto& d: sampMembers) for (const auto& dd: d->thisDecls)
+    {
+        if ( dd->ident.Original() == ident)
+            return dd.get();
+    }
+
+    for (const auto& d: varMembers) for (const auto& dd: d->thisDecls)
+    {
+        if ( dd->ident.Original() == ident)
+            return dd.get();
+    }
+
+    if (baseStructRef)
+    {
+        if (auto symbol = baseStructRef->FetchInStructDecl(ident, owner))
+            return symbol;
+    }
+
+    return nullptr;
+}
+
 VarDecl* StructDecl::FetchBaseMember() const
 {
     if (!varMembers.empty() && varMembers.front()->flags(VarDeclStmnt::isBaseMember))

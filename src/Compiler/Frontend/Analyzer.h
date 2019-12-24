@@ -106,6 +106,7 @@ class Analyzer : protected VisitorTracker
 
         // Tries to fetch a 'VarDecl' with the specified identifier from the structure type denoter and reports an error on failure.
         VarDecl* FetchVarDeclFromStruct(const StructTypeDenoter& structTypeDenoter, const std::string& ident, const AST* ast = nullptr);
+        InStructDecl* FetchFetchInStructDeclFromStruct(const StructTypeDenoter& structTypeDenoter, const std::string& ident, const AST* ast = nullptr);
 
         FunctionDecl* FetchFunctionDeclFromStruct(
             const StructTypeDenoter& structTypeDenoter, const std::string& ident,

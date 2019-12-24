@@ -949,11 +949,14 @@ TypeDenoterPtr StructTypeDenoter::GetSubObject(const std::string& ident, const A
 {
     auto structDecl = GetStructDeclOrThrow(ast);
 
-    if (auto varDecl = structDecl->FetchVarDecl(ident))
+    //if (auto varDecl = structDecl->FetchVarDecl(ident))
+    if (auto varDecl = structDecl->FetchInStructDecl(ident))
     {
         /* Return type of variable declaration in structure */
         return varDecl->GetTypeDenoter();
     }
+
+    //if (auto d = )
 
     RuntimeErr(
         R_UndeclaredIdent(ident, structDecl->ToString(), structDecl->FetchSimilar(ident)),
