@@ -3188,6 +3188,8 @@ bool GLSLGenerator::WriteStructDecl(StructDecl* structDecl, bool endWithSemicolo
     BeginSep();
     {
         WriteStmntList(structDecl->varMembers);
+        WriteStmntList(structDecl->bufMembers);
+        WriteStmntList(structDecl->sampMembers);
     }
     EndSep();
     WriteScopeClose();
@@ -3297,7 +3299,8 @@ void GLSLGenerator::WriteBufferDeclTexture(BufferDecl* bufferDecl)
         if (isRWBuffer && (isWriteOnly || imageLayoutFormat == ImageLayoutFormat::Undefined))
             Write("writeonly ");
 
-        Write("uniform ");
+        if(!bufferDecl->structDeclRef)
+            Write("uniform ");
 
         /* Write sampler type and identifier */
         if (auto genericTypeDen = bufferDecl->declStmntRef->typeDenoter->genericTypeDenoter)
