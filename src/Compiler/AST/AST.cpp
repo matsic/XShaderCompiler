@@ -719,19 +719,22 @@ VarDecl* StructDecl::FetchVarDecl(const std::string& ident, const StructDecl** o
 
 InStructDecl* StructDecl::FetchInStructDecl(const std::string& ident, const StructDecl** owner) const
 {
-    for (const auto& d: bufMembers) for (const auto& dd: d->thisDecls)
+    for (const auto& d: bufMembers)
+    for (const auto& dd: d->bufferDecls)
     {
         if ( dd->ident.Original() == ident)
             return dd.get();
     }
 
-    for (const auto& d: sampMembers) for (const auto& dd: d->thisDecls)
+    for (const auto& d: sampMembers)
+    for (const auto& dd: d->samplerDecls)
     {
         if ( dd->ident.Original() == ident)
             return dd.get();
     }
 
-    for (const auto& d: varMembers) for (const auto& dd: d->thisDecls)
+    for (const auto& d: varMembers)
+    for (const auto& dd: d->varDecls)
     {
         if ( dd->ident.Original() == ident)
             return dd.get();

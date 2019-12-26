@@ -911,7 +911,6 @@ struct BufferDeclStmnt : public Stmnt
 
     BufferTypeDenoterPtr        typeDenoter;    // Own type denoter.
     std::vector<BufferDeclPtr>  bufferDecls;    // Buffer declaration list.
-    typeof(bufferDecls)& thisDecls = bufferDecls;
 };
 
 // Sampler declaration.
@@ -924,7 +923,6 @@ struct SamplerDeclStmnt : public Stmnt
 
     SamplerTypeDenoterPtr       typeDenoter;    // Own type denoter.
     std::vector<SamplerDeclPtr> samplerDecls;   // Sampler declaration list.
-    typeof(samplerDecls)& thisDecls = samplerDecls;
 };
 
 // Basic declaration statement.
@@ -994,7 +992,6 @@ struct VarDeclStmnt : public Stmnt
 
     TypeSpecifierPtr        typeSpecifier;  // Type basis for all variables (can be extended by array indices in each individual variable).
     std::vector<VarDeclPtr> varDecls;       // Variable declaration list.
-    typeof(varDecls)& thisDecls = varDecls;
 };
 
 // Type alias declaration statement.
